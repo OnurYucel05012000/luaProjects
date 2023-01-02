@@ -1,0 +1,42 @@
+--versiyon güncellme kurallari--
+====Vx_y_z====
+
+Proje: 
+  Enginedxdt V0_1_3
+  \-guip     V0_2_1
+_________________________________
+
+*ay icinde yenilik eklendiyse ay başı bir kere (x++)
+*yeni dosya eklenirse  (y++)
+*fonksiyon güncellemsi (z++)
+_________________________________
+
+31.12.22 soundManager eklendi 
+
+ -V0_1_3 ::
+   *fonksiyonlar düzeltildi 
+   *klavye girdileri StateKeyInput dosyasi icinde ayrildi
+    guip V0_2_1
+    *cursorY olusturma fonksiyonu güncellendi
+
+ -V0_1_2 ::
+   *Cekirdege guipV0_2 eklendi
+   
+ -V0_0_2 ::
+   *Dosyalar düzenlendi
+   *Projenin Adi EngineDx ve versiyonu V_0_0_1 ile değiştirildi
+ -V0_3_0 ::
+    wav dosyalari burda yuklenip istendiğinde fonksiyon 
+    aracılığı ile oynatilacak
+ 
+
+29.12.22 renderUnit eklendi
+  -V0_2_0 :: 
+    artik oyun renderGame.lua icinde cizdiriliyor
+    ve oyun carpismalari ve güncellemeleri logicGame.lua da yapiliyor
+  
+
+28.12.22 stateManager init() eklemeler yapildi 
+    -V0_1_3 :: init() kismi düzeltildi
+    -V0_1_2 :: Artık durumlar init() icinde olusuturulup durum ataması yapıpılıyor 
+
