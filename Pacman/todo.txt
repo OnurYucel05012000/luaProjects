@@ -1,0 +1,73 @@
+pacman bloklara carptiginda hiz vektoru sifir olucak ve herhangi bir yone dogru hareket edebilecek
+duvarlarin goruntusunu nasil vericem ? 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*harita 
+ $ bloklardan 
+ $ 2 boyutlu bir diziden
+ $ tile/karo harita 
+
+-gorsel ekle
+
+-hatalari gider
+
+-buyuk noktayi yiyince hayaletler kacsin
+
+-hayaletlerin durum makinesini hazirla
+  -su yapay zeka kitabina bak orda birkac sey yaziyordu. Ilk once saf lua da dene
+  
+  -stateMachine.lua ?
+    
+
+-hayalet x oyuncu carpisma fonksiyonunu yaz
+
+-hayaletleri ekrana cizdir
+  -ghost.lua 
+    -x,y,width,height
+    -update()
+    -draw()
+
+-noktalarin hepsi yenilmişse 
+  -oyunun kapat
+  -diger seviyeye gec
+
+-buyuk noktalarida ekle
+  -point.lua
+   -isBigDot = true
+
+-noktalari yiyebilme ozelligi ekle
+  -point.lua
+    -x,y,width,height,isBigDot=false
+    -draw()    
+
+-haritayi yerlestir
+  -wall.lua
+    -x,y,width,height
+     -draw()
+
+-pencerenin disina cikmasini engelle
+  -if player.x >= 600 and ... then
+     player.move()
+   end
+
+-pacman yon tusuna basildiginda o yonde hareket etmeye devam edicek
+  -if player.collision(wall) then
+       player.speed = 0
+   end
+
+-klavye ile hareket eden kare
