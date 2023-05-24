@@ -11,10 +11,10 @@ function GameState.newGameState()
     blockClass = nil,
     collisionClass = nil,
 
-    Player = nil,
-    requestDirection = {up = false,down = false,right=false,left = false},
-    Keys = {},
+    tileLoader = nil,
 
+    Player = nil,
+    requestDirection = {up = false,down = false,right = false,left = false}
     
     }    
     setmetatable(this,GameState)
@@ -32,13 +32,6 @@ function GameState:init_Player()
     local playerClass = require("Enginedxdt.entitys.Player")
     self.Player = playerClass.new(32*4,32*4,32,32)
 
-    self.Keys.up = false
-    self.Keys.down = false
-    self.Keys.right = false
-    self.Keys.left = false
-
-    self.Player.currentDirection.right = true
-
 end  
 
 function GameState:init (statemanager_)
@@ -48,14 +41,14 @@ function GameState:init (statemanager_)
     self.blockClass = require("Enginedxdt.objects.Block")
     
     -------------TILE LOADER------------------
-    local tileLoader = require("Enginedxdt.TileManager.TileLoader").new()
+    self.tileLoader = require("Enginedxdt.TileManager.TileLoader").new()
     
-    tileLoader:load_toTable("world.txt")
+    self.tileLoader:load_toTable("world.txt")
 
     local x = 0
     local y = 0
 
-    for _, rows in ipairs(tileLoader.tilemap) do
+    for _, rows in ipairs(self.tileLoader.tilemap) do
         for _, tile in ipairs(rows) do
             if tile == 1 then
                 self:create_Block(x,y)
@@ -84,124 +77,75 @@ end
 ------------------------------------------------------
 --collisionDetection()
 ------------------------------------------------------
-function GameState:collision_forRequestDirection(tempPlayer)
-    for index,block in ipairs(self.blockList) do
-        if self.collisionClass.collisionAABB(tempPlayer,block) then
-            return true
-        end
-    end
-    return false
-end
 
-function GameState:collision_Player_x_Blocks()
+function GameState:collision_Player_x_Blocks(tempPlayer)
     
-    for _,block in ipairs(self.blockList) do 
-        
-        if self.collisionClass.collisionAABB(self.Player,block) then   
-                                
-            if self.Player.currentDirection.up then
-                self.Player.currentDirection.stopped = true
-            elseif self.Player.currentDirection.down then
-                self.Player.currentDirection.stopped = true            
-            end
-                        
-        end
-    end--for end
-    
+   for _, value in ipairs(self.blockList) do
+       if self.collisionClass.collisionAABB(tempPlayer,value) then                      
+           return true
+       end
+   end
 
-    if self.requestDirection.up then
-        self.Player.currentDirection.stopped = false
-        self.Player.currentDirection.up = true
-
-        self.Player.currentDirection.down = false
-        self.Player.currentDirection.left = false
-        self.Player.currentDirection.right = false
-
-        self.requestDirection.up = false
-    end
-
-    if self.requestDirection.down then
-        self.Player.currentDirection.stopped = false
-        self.Player.currentDirection.up = false
-
-        self.Player.currentDirection.down = true
-
-        self.Player.currentDirection.left = false
-        self.Player.currentDirection.right = false
-        self.requestDirection.down = false
-    end
-    
-    if self.requestDirection.left then
-        self.Player.currentDirection.stopped = false
-        self.Player.currentDirection.up = false
-        self.Player.currentDirection.down = false
-
-        self.Player.currentDirection.left = true
-
-        self.Player.currentDirection.right = false
-        self.requestDirection.left = false
-    end
-
-    if self.requestDirection.right then
-        self.Player.currentDirection.stopped = false
-        self.Player.currentDirection.up = false
-        self.Player.currentDirection.down = false
-        self.Player.currentDirection.left = false
-
-        self.Player.currentDirection.right = true
-
-        self.requestDirection.right = false
-    end
-
-    --[[
-    if self.requestDirection.up == true and self.requestDirection.up ~= self.Player.currentDirection.up then
-        
-        tempPlayer.y = tempPlayer.y - 32                
-        if not (self:collision_forRequestDirection(tempPlayer)) then
-            self.Player.currentDirection.up = true                 
-            self.requestDirection.up = false
-        end
-
-    elseif self.requestDirection.down == true and self.requestDirection.down ~= self.Player.currentDirection.down then
-        
-        tempPlayer.y = tempPlayer.y + 32
-        if not (self:collision_forRequestDirection(tempPlayer)) then
-            self.Player.currentDirection.down = true
-            self.requestDirection.down = false
-            self.Player.y = self.Player.y + 4
-        end
-    end
-    elseif self.requestDirection.right == true and self.requestDirection.right ~= self.Player.currentDirection.right then
-
-        print("right side")
-        tempPlayer.x = tempPlayer.x + 32
-        if not (self:collision_forRequestDirection(tempPlayer)) then
-            self.Player.currentDirection.right = true
-            self.requestDirection.right = false
-            
-        end
-
-    elseif self.requestDirection.left == true and self.requestDirection.left ~= self.Player.currentDirection.left then
-
-        tempPlayer.x = tempPlayer.x - 32
-        if not (self:collision_forRequestDirection(tempPlayer)) then
-            self.Player.currentDirection.left = true
-            self.requestDirection.left = false
-        end
-
-    end    
-    ]]--
-
+   return false
 end
 ------------------------------------------------------
 --gameLogic()
 ------------------------------------------------------
 
+function GameState:movement_logic()
+    
+    --ilerde bu bolum sikinti yaratacak--
+    local playerWorldX = (self.Player.x / 32) + 1
+    local playerWorldY = (self.Player.y / 32) + 1
+    -------------------------------------
+
+    if  not (self.Player.currentDirection.stopped) and
+        (
+            self.tileLoader.tilemap[math.ceil(playerWorldY - 1)][playerWorldX] == 1 or --up
+            self.tileLoader.tilemap[math.floor(playerWorldY + 1)][playerWorldX] == 1    --down
+            --self.tileLoader.tilemap[playerWorldY - 1][playerWorldX] == 1    --right
+            --self.tileLoader.tilemap[playerWorldY - 1][playerWorldX] == 1    --left
+        ) 
+    then
+        print("Collision")
+        self.Player.currentDirection.stopped = true
+
+        self.Player.currentDirection.up = false
+        self.Player.currentDirection.down = false
+        self.Player.currentDirection.right = false
+        self.Player.currentDirection.left = false
+
+        self.requestDirection.up = false
+        self.requestDirection.down = false
+        self.requestDirection.right = false
+        self.requestDirection.left = false
+    end
+
+    if self.requestDirection.up then            
+        if self.tileLoader.tilemap[math.ceil(playerWorldY - 1)][playerWorldX] ~= 1 then
+            self.requestDirection.up = false
+            self.Player.currentDirection.up = true
+            self.Player.currentDirection.stopped = false
+        end
+
+    elseif  self.requestDirection.down then
+        if self.tileLoader.tilemap[math.floor(playerWorldY + 1)][playerWorldX] ~= 1 then
+            self.requestDirection.down = false
+            self.Player.currentDirection.down = true
+            self.Player.currentDirection.stopped = false
+        end
+    end
+
+end
+
 ------------------------------------------------------
 --update()
 ------------------------------------------------------
 function GameState:update (dt)
-    self:collision_Player_x_Blocks()
+    
+    self:movement_logic()
+   
+
     self.Player:update(dt)
 end
 
@@ -218,16 +162,23 @@ function GameState:draw ()
     --DRAW TILES
 
     love.graphics.print("gameState")
-    love.graphics.print("up    : " ..tostring(self.Player.currentDirection.up),50,400)
-    love.graphics.print("down  : " ..tostring(self.Player.currentDirection.down),50,420)
-    love.graphics.print("left  : " ..tostring(self.Player.currentDirection.left),50,440)
-    love.graphics.print("right : " ..tostring(self.Player.currentDirection.right),50,460)
-    
-    love.graphics.print("Request up    : " ..tostring(self.requestDirection.up),300,400)
-    love.graphics.print("Request down  : " ..tostring(self.requestDirection.down),300,420)
-    love.graphics.print("Request left  : " ..tostring(self.requestDirection.left),300,440)
-    love.graphics.print("Request right : " ..tostring(self.requestDirection.right),300,460)
 
+    love.graphics.print("up    : " .. tostring(self.Player.currentDirection.up),40,510)
+    love.graphics.print("down  : " .. tostring(self.Player.currentDirection.down),40,530)
+    love.graphics.print("left  : " .. tostring(self.Player.currentDirection.left),40,550)
+    love.graphics.print("right : " .. tostring(self.Player.currentDirection.right),40,570)
+
+    love.graphics.print("request up    : " .. tostring(self.requestDirection.up),200,510)
+    love.graphics.print("request down  : " .. tostring(self.requestDirection.down),200,530)
+    love.graphics.print("request left  : " .. tostring(self.requestDirection.left),200,550)
+    love.graphics.print("request right : " .. tostring(self.requestDirection.right),200,570)
+
+    love.graphics.print("stopped : ".. tostring(self.Player.currentDirection.stopped),150,350)
+    love.graphics.print("playerWorldX : "..(self.Player.x / 32) + 1,40,370)
+    love.graphics.print("playerWorldY : "..(self.Player.y / 32) + 1,40,390)
+
+    love.graphics.print("ceil(playerWorldX) : "..math.ceil((self.Player.x / 32) + 1),200,370)
+    love.graphics.print("ceil(playerWorldY) : "..math.ceil((self.Player.y / 32) + 1),200,390)
     self.Player:draw()
 end        
 
