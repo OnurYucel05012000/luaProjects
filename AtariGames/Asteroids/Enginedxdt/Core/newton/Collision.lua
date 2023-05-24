@@ -1,6 +1,7 @@
-local Collision = {}
 
-function Collision.collisionAABB(A,B)
+local function collisionAABB()
+    local A
+    local B
     
     if 
         A.x < B.x + B.width   and
@@ -12,5 +13,3 @@ function Collision.collisionAABB(A,B)
     end
     return false
 end
-
-return Collision

@@ -9,23 +9,26 @@ function Player.new(x,y,width,height)
         width=width,
         height=height,
         speed = 50,
+        
+        currentDirection = {stopped = false,up = false,right=false,down = false,left = false},
 
-        direction = {up = false,right = false,down = false,left = false},
-        currentDirection = {up = false,right=false,down = false,left = false},
-
-        keyLock = {up = false,right = false,down = false,left = false}
     }
     setmetatable(this,Player)
     return this
 end
 
 function Player:update(dt)
+   
+    if self.currentDirection.stopped then
+        return
+    end
+
     --up--
    if self.currentDirection.up then
     self.y = self.y - self.speed*dt
 
    --right--
-   elseif self.direction.right then
+   elseif self.currentDirection.right then
     self.x = self.x + self.speed*dt
 
     --down--
@@ -33,7 +36,7 @@ function Player:update(dt)
     self.y = self.y + self.speed*dt
 
     --left--
-   elseif self.direction.left then
+   elseif self.currentDirection.left then
     self.x = self.x - self.speed*dt
 
    end
