@@ -21,10 +21,17 @@ function moonVec2d.new(x,y)
     checkisInteger(x,y)
     local this = {
         x=x,
-        y=y
+        y=y,
+
+        r=0,
+        alfa = 0
     }
     setmetatable(this,moonVec2d)
     return this
+end
+
+function moonVec2d:toPolar()
+    
 end
 
 function moonVec2d:div(value)

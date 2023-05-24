@@ -12,10 +12,15 @@ end
 function keyGameState:keyPressed(key)
 
     if key == "w" then
-        self.gameState.Keys.up = true            
+        self.gameState.Keys.up = true
     elseif key == "s" then
         self.gameState.Keys.down = true
+    elseif key == "d" then
+        self.gameState.Keys.right = true
+    elseif key == "a" then
+        self.gameState.Keys.left = true
     end
+
     
 end
 
@@ -25,6 +30,10 @@ function keyGameState:keyReleased(key)
         self.gameState.Keys.up = false
     elseif key == "s" then
         self.gameState.Keys.down = false
+    elseif key == "d" then
+        self.gameState.Keys.right = false
+    elseif key == "a" then
+        self.gameState.Keys.left = false    
     end
 
 end
